@@ -6,6 +6,8 @@ Last edited time: April 19, 2024 6:47 PM
 
 # Обновления
 
+- 2024-09-26
+    - Перенос документации на гитхаб
 - 2024-04-19
     - searchesDict: preset
     - 
@@ -31,17 +33,18 @@ Last edited time: April 19, 2024 6:47 PM
 
 Каждый день скачивается 1млн самых популярных запросов из портала ВБ, частотность берется за месяц
 
-| столбец | тип | для чего |
-| --- | --- | --- |
-| `id` | `int` | сквозной идентификатор поискового запроса, используется в таблице `searchPositions`, `searchInfoHistories` |
-| `text` | `String` | Текст поискового запроса |
-| `requestCount` | `int` | Частотность запроса. Актуальное значение(вчера-сегодня) |
-| `normQuery` | `String` | Кластер запроса |
-| `lastDate` | `DateTime` | Дата последнего обновления запроса |
-| `subjects.id` | `Array(int)` | массив номеров предметов, которые входят в этот запрос |
-| `subjects.count` | `Array(int)` | массив количества предметов, которые входят в этот запрос |
-| `goodsCount` | `int` | количество товаров в запросе |
-| `preset` | `String` | Пресет |
+|имя столбца|Тип|Описание|
+|--|--|--|
+|`id`|`Int32`|Айди поискового запроса, в других таблицах назывется `searchKeyId`|
+|`text`|`String`|текст запроса|
+|`requestCount`|`Int32`|частотность запроса за 30 дней|
+|`normQuery`|`String`||
+|`lastDate`|`DateTime`|дата последнего обновления|
+|`subjects.id`|`Array(Int32)`|Массив айди предметов|
+|`subjects.count`|`Array(Int32)`|Массив количества предметов в выдаче по данному запросу|
+|`goodsCount`|`Int32`|Количество товаров в выдаче|
+|`preset`|`String`||
+|`lemmas`|`Array(String)`|строки, полученные из yandex mystem3|
 
 ## `subjects`
 
@@ -49,12 +52,12 @@ Last edited time: April 19, 2024 6:47 PM
 
 На данный момент(сентябрь 2023) обновляется в ручном режиме. Если каких-то предметов нет в списке - пишите мнe в телеграм [t.me/ilnur_ibatullin](http://t.me/ilnur_ibatullin)
 
-| столбец | тип | для чего |
-| --- | --- | --- |
-| `id` | `int` | Номер предмета из ВБ. |
-| `name` | `String` | Имя предмета |
-| `parentId` | `int` | Номер родительского предмета |
-| `parentName` | `String` | Имя родительского предмета |
+|имя столбца|Тип|Описание|
+|--|--|--|
+|`id`|`Int32`|Айди предмета|
+|`name`|`String`|Название предмета|
+|`parentId`|`Int32`|айди родительского предмета|
+|`parentName`|`String`|Название родительского предмета|
 
 ## `searchPositions`
 
@@ -66,8 +69,9 @@ Last edited time: April 19, 2024 6:47 PM
 
 список 10 пвз, откуда делается парсинг:
 
-| `MOSCOW_CENTER` | [большой Афанасьевский переулок, 22](https://go.2gis.com/daydtv)  |
+| Название | Адрес |
 | --- | --- |
+| `MOSCOW_CENTER` | [большой Афанасьевский переулок, 22](https://go.2gis.com/daydtv)  |
 | `MOSCOW_EAST` | [Оршанская, 9](https://go.2gis.com/8hbyq7) |
 | `MOSCOW_SOUTH` | [Красного Маяка, 4к1](https://go.2gis.com/stbkb) |
 | `MOSCOW_WEST` | [Зеленый проспект, 83](https://go.2gis.com/i28hd) |
@@ -84,29 +88,20 @@ Last edited time: April 19, 2024 6:47 PM
 
 Автокампании тоже здесь учитываются
 
-| столбец | тип | для чего |
-| --- | --- | --- |
-| `productId` | `int` | Артикул товара |
-| `date` | `Date` | Дата парсинга |
-| `dest` | `Enum(String)` | Возможные варианты 
-`MOSCOW_CENTER
-MOSCOW_EAST
-MOSCOW_SOUTH
-MOSCOW_WEST
-MOSCOW_NORTH
-PITER
-KRASNODAR
-KAZAN
-EKAT
-NOVOSIB` |
-| `searchKeyId` | `int` | идентификатор поискового запроса |
-| `position` | `int` | Позиция товара в эту дату в поисковом запросе |
-| `autoAdCpm` | `int` | рекламная ставка в авторекламе |
-| `autoAdPromotion` | `int` | – |
-| `autoAdPosition` | `int` | какая позиция была бы при отключенной автокампании |
-| `autoAdPromoPosition` | `int` | какая актуальная позиция автокампании. Позиция начинается с нуля, поэтому если здесь стоит значение 10, значит фактически он находится на 11 месте, ровно такое же значение указано в столбце position |
-| `autoAdAdvertId` | `int` | Идентификатор рекламной кампании |
-| `sellerId` | `int` | Идентификатор селлера |
+|имя столбца|Тип|Описание|
+|--|--|--|
+|`productId`|`Int32`|Артикул товара|
+|`date`|`Date`|Дата парсинга|
+|`dest`|`MOSCOW_NORTH \| PITER \| KRASNODAR \| KAZAN \| EKAT \| NOVOSIB \| MOSCOW_CENTER \| MOSCOW_EAST \| MOSCOW_SOUTH \| MOSCOW_WEST`|ПВЗ, с которого идет парсинг|
+|`searchKeyId`|`Int32`|Айди поискового запроса|
+|`position`|`Int32`|Позиция в выдаче|
+|`sellerId`|`Int32`|Айди селлера|
+|`autoAdCpm`|`Int32`|ставка авторекламы|
+|`autoAdPromotion`|`Int32`||
+|`autoAdPosition`|`Int32`|Позиция без рекламы|
+|`autoAdPromoPosition`|`Int32`|Позиция с рекламой|
+|`autoAdAdvertId`|`Int32`|айди рекламной кампании|
+|`version`|`Int64`||
 
 В этой таблице очень много данных, в среднем каждый день появляется порядка 500млн строк, поэтому запросы нужно делать строго с фильтром по артикулам. Например `select * from searchPositions where id = 12341234`
 
@@ -142,78 +137,76 @@ where id in (
 
 Имеет похожую на `searchPositions`. Таблица заполняется по мере запуска парсинга через бота
 
-| столбец | тип | для чего |
-| --- | --- | --- |
-| `productId` | `int`  | Артикул товара |
-| `searchKeyId` | `int` | идентификатор поискового запроса |
-| `parsedAt` | `DateTime` | Дата парсинга |
-| `parseId` | `Int64` | идентификатор парсинга. unix_timestamp, по этому полю можно вытащить дату/время парсинга. и по этому полю нужно группировать запуски парсинга.  |
-| `dest` | `Enum(String)` | Возможные варианты 
-`MOSCOW_CENTER
-MOSCOW_EAST
-MOSCOW_SOUTH
-MOSCOW_WEST
-MOSCOW_NORTH
-PITER
-KRASNODAR
-KAZAN
-EKAT
-NOVOSIB` |
-| `position` | `int` | Позиция товара в эту дату в поисковом запросе |
-| `autoAdCpm` | `int` | рекламная ставка в авторекламе |
-| `autoAdPosition` | `int` | какая позиция была бы при отключенной автокампании |
-| `autoAdPromotion` | `int` | – |
-| `autoAdPromoPosition` | `int` | какая актуальная позиция автокампании. Позиция начинается с нуля, поэтому если здесь стоит значение 10, значит фактически он находится на 11 месте, ровно такое же значение указано в столбце position |
-| `autoAdAdvertId` | `int` | Идентификатор рекламной кампании |
-| `sellerId` | `int` | Идентификатор селлера |
-
 ## `productHistories`
 
 Таблица с историей товаров. Обновляется раз в день, если нужно следить за изменением СПП три раза в день - смотрите в `productStocks`, там больше 1 раза в день можно отслеживать. 
 
-| столбец | тип данных | описание |
-| --- | --- | --- |
-| `id` | `Int32` | Артикул товара |
-| `date` | `Date` | Дата парсинга, без времени |
-| `rootId` | `Int32` | Идентификатор, который связывает цвета товаров. Группирует несколько артикулов в один |
-| `parsedAt` | `DateTime` | дата парсинга, с временем |
-| `prevParsedAt` | `DateTime` | Предыдущая дата парсинга, пока что не работает |
-| `kindId` | `Int32` | вероятно, что это “пол” товара(мужской, женский, для детей?) |
-| `subjectId` | `Int32` | Айди предмета. Название смотреть в таблице `subjects` |
-| `brandId` | `Int32` | айди бренда, название смотреть в таблице `brands` |
-| `sellerId` | `Int32` | айди селлера, детальная информация в таблице `sellers` |
-| `basePrice` | `Int32` | Начальная цена товара в копейках, до всех скидок |
-| `price` | `Int32` | Конечная цена товара в копейках с учетом всех скидок и спп |
-| `basicSale` | `Int32` | скидка ~~продавца~~ |
-| `~~clientSale~~` | `~~Int32~~` | ~~со-инвест ВБ, или СПП~~ Спп теперь не парсится. Вб закрыл |
-| `feedbacksCount` | `Int32` | кол-во отзывов. Сами отзывы смотреть в `feedbacks` |
-| `allSalesAmount` | `Int32` | Купили более раз |
-| `stocksCount` | `Int32` | кол-во  остатков, с учетом всех складов |
-| `promoText` | `String` | Акция, где участвует товар |
-| `stocks.wh` | `array(int)` | массив остатков: номер склада |
-| `stocks.qty` | `array(int)` | массив остатков: кол-во товаров |
-| `stocks.optionId` | `array(int)` | массив остатков: номер размера |
-| `stocks.name` | `array(String)` | массив остатков: название размера |
-| `stocks.origName` | `array(String)` | массив остатков: название размера |
+|имя столбца|Тип|Описание|
+|--|--|--|
+|`id`|`Int32`|Артикул|
+|`date`|`Date`|Дата парсинга|
+|`rootId`|`Int32`|Идентификатор, по которому товары связаны по цветам|
+|`parsedAt`|`DateTime`|Дата парсинга|
+|`prevParsedAt`|`DateTime`||
+|`kindId`|`Int32`||
+|`subjectId`|`Int32`|Айди предмета|
+|`brandId`|`Int32`|Айди бренда|
+|`sellerId`|`Int32`|Айди селлера|
+|`basePrice`|`Int32`|Базовая цена до скидок|
+|`price`|`Int32`|конечная цена, с учетом скидки продавцаи СПП, без учета ВБ Кошелька|
+|`basicSale`|`Int32`||
+|`clientSale`|`Int32`||
+|`feedbacksCount`|`Int32`|количество оценок|
+|`allSalesAmount`|`Int32`|(устарело)|
+|`stocksCount`|`Int32`|Кол-во остатков по всем размерам и на всех складах|
+|`promoText`|`String`|Название акции, в котором участвует|
+|`stocks.wh`|`Array(Int32)`|Массив чисел - айди складов|
+|`stocks.qty`|`Array(Int32)`|Массив чисел - количество остатков на этом складе этого размера|
+|`stocks.optionId`|`Array(Int32)`|Массив чисел - айди размера|
+|`stocks.name`|`Array(String)`|Массив строк - название размера|
+|`stocks.origName`|`Array(String)`|Массив строк - название размера|
+|`stocks.price`|`Array(Int32)`|Массив чисел - цена данного размера|
+|`stocks.basePrice`|`Array(Int32)`|Массив чисел - базовая цена данного размера|
+|`reviewRating`|`Float32`|оценка товара|
 
 ## `brands`
 
 Список брендов
 
-| `id` | `int` |
-| --- | --- |
-| `name` | `String` |
-| `url` | `String` |
+|имя столбца|Тип|Описание|
+|--|--|--|
+|`id`|`Int32`|айди бренда|
+|`name`|`String`|название бренда|
+|`url`|`String`|ссылка на страницу бренда|
 
 ## `sellers`
 
 Список селлеров
 
-| `id` | `int` | айди селлера |
-| --- | --- | --- |
-| `name` | `String` | имя селлера |
-| `inn` | `String` | инн |
-| `ogrn` | `String` | огрн |
+|имя столбца|Тип|Описание|
+|--|--|--|
+|`id`|`Int32`|айди селлера|
+|`feedbacksCount`|`Int32`|Количество оценок|
+|`valuation`|`Float32`|оценка селлера|
+|`allSalesAmount`|`Int32`|общее число продаж по всем товарам|
+|`updatedAt`|`DateTime`|последнее обновление|
+|`registrationDate`|`DateTime`|Дата регистрации|
+|`defectPercent`|`Float32`|Процент брака|
+|`hasLogo`|`Int32`||
+|`hasBanner`|`Int32`||
+|`rating`|`Float32`|Рейтинг|
+|`deliveryDuration`|`Int32`|Среднее время доставки|
+|`ratingIsInvisible`|`Int32`||
+|`name`|`String`|Название селлера|
+|`trademark`|`String`|Торговый знак|
+|`ogrn`|`String`|ОГРН|
+|`address`|`String`|Адрес|
+|`inn`|`String`|ИНН|
+|`fullName`|`String`|Полное наименование|
+|`kpp`|`String`|КПП|
+|`unp`|`String`||
+|`bin`|`String`||
+|`taxpayerCode`|`String`||
 
 ## `feedbacks`
 
@@ -221,26 +214,28 @@ NOVOSIB` |
 
 Фильтровать нужно по `rootId`
 
-| `rootId` | `int` | корневой артикул товара, объединящий цвета |
-| --- | --- | --- |
-| `nmId` | `int` | Артикул товара в котором оставили отзыв |
-| `id` | `String` | идентификатор отзыва, техническое поле |
-| `wbUserId` | `int` | идентификатор пользователя |
-| `wbUserName` | `String` | имя пользователя |
-| `wbUserCountry` | `String` | страна пользователя |
-| `text` | `String` | Текст отзыва |
-| `productValuation` | `int` | кол-во звезд отзыва |
-| `color` | `String` | цвет товара |
-| `createdAt` | `DateTime` | дата отзыва |
-| `updatedAt` | `DateTime` | дата “обновления” отзыва |
-| `~~answerState~~` | `~~String~~` | ~~—~~ |
-| `answerCreatedAt` | `DateTime` | дата ответа представителя бренда |
-| `answerSupplierId` | `int` | — |
-| `answerText` | `Strinig` | текст ответа представителя бренда |
-| `photosCount` | `int` | кол-во фото в отзыве |
-| `feedbackHelpfulness.wbUserId` | `array(int)` | массив `wbUserId`, оставивших лайк/дизлайк |
-| `feedbackHelpfulness.helpfulness` | `array(true|false)` | массив лайков/дизлайков к отзыву |
-| `feedbackHelpfulness.time` | `array(dateTime)` | массив дат, когда оставляли лайки/дизлайки |
+|имя столбца|Тип|Описание|
+|--|--|--|
+|`nmId`|`Int32`|Артикул товара|
+|`id`|`String`|Идентификатор отзыва|
+|`wbUserId`|`Int32`|Айди Юзера|
+|`wbUserName`|`String`|Название Юзера|
+|`wbUserCountry`|`String`|Страна Юзера|
+|`text`|`String`|Текст отзыва|
+|`productValuation`|`Int32`|Оценка отзыва|
+|`color`|`String`|Цвет товара|
+|`size`|`String`|Размер|
+|`createdAt`|`DateTime`|Отзыв создан|
+|`updatedAt`|`DateTime`|Отзыв измене|
+|`feedbackHelpfulness.wbUserId`|`Array(Int32)`|Массив айди - юзеры, которые оставили свои лайки/дизлайки|
+|`feedbackHelpfulness.helpfulness`|`Array(Enum8('plus' = 1, 'minus' = 2, 'none' = 3))`|Массив строк - лайк/дизлайк|
+|`feedbackHelpfulness.time`|`Array(DateTime)`|Массив дат, когда были оставлены реакции|
+|`answerCreatedAt`|`DateTime`|Дата ответа бренда|
+|`answerSupplierId`|`Int32`|Айди селлера, который оставил ответ|
+|`answerText`|`String`|Текст ответа бренда|
+|`photosCount`|`Int32`|Количество фотографий, которые оставил юзер|
+|`answerState`|`String`||
+|`rootId`|`Int32`|Идентификатор, по которому товары связаны по цветам|
 
 ## `productStats`
 
@@ -250,106 +245,100 @@ NOVOSIB` |
 
 Таблица обновляется один раз в день, где-то к 8-9 утра по мск. Дубликатов данных быть не должно, если есть - пишите [t.me/ilnur_ibatullin](http://t.me/ilnur_ibatullin)
 
-| `id` | `Int32` | Артикул товара |
-| --- | --- | --- |
-| `version` | `Int64` | версия. техническое поле |
-| `firstParsedAt` | `DateTime` | дата начала отслеживания товара |
-| `lastParsedAt` | `DateTime` | дата последнего парсинга |
-| `rootId` | `Int32` | связующий идентификатор товары внутри “цвета” |
-| `subjectId` | `Int32` | айди предмета. описание в таблице `subjects` |
-| `brandId` | `Int32` | айди бренда. описание в таблице `brands` |
-| `sellerId` | `Int32` | айди селлера. описание в таблице `sellers` |
-| `basePrice` | `Int32` | начальная цена в копейках до всех скидок |
-| `price` | `Int32` | конечная цена в копейках с учетом спп и скидки продавца |
-| `basicSale` | `Int32` | скидка продавца |
-| `clientSale` | `Int32` | скидка ВБ(СПП) |
-| `feedbacksCount` | `Int32` | количество отзывов |
-| `allSalesAmount` | `Int32` | купили более раз |
-| `stocksCount` | `Int32` | количество остатков |
-| `brandName` | `String` | название бренда |
-| `brandUrl` | `String` | `url` бренда |
-| `sellerName` | `String` | название селлера |
-| `sellerInn` | `String` | инн селлера |
-| `sellerOgrn` | `String` | огрн селлера |
-| `name` | `String` | название товара |
-| `description` | `String` | описание товара |
-| `contents` | `String` | — |
-| `composition` | `String` | — |
-| `options_name` | `Array(String)` | массив ключей характеристик |
-| `options_value` | `Array(String)` | массив значений характеристик |
-| `volume` | `String` | значение “Объем товара” из характеристик, в отдельном поле |
-| `country` | `String` | значение “Страна производства” из характеристик |
-| `weight` | `String` | значение “Вес товара с упаковкой (г)” или “Вес с упаковкой (кг)” из характеристик |
-| `numberOfItems` | `String` | значение “Количество предметов в упаковке” из характеристик |
-| `promoText` | `String` | Акция, где участвует товар |
+|имя столбца|Тип|Описание|
+|--|--|--|
+|`id`|`Int32`|Артикул|
+|`version`|`Int64`||
+|`firstParsedAt`|`DateTime`|Дата начала отслеживания|
+|`lastParsedAt`|`DateTime`|Последний парсинг|
+|`rootId`|`Int32`|Идентификатор, по которому товары связаны по цветам|
+|`subjectId`|`Int32`|Айди предмета|
+|`brandId`|`Int32`|Айди бренда|
+|`sellerId`|`Int32`|Айди селлера|
+|`basePrice`|`Int32`|Цена без скидки|
+|`price`|`Int32`|Цена с учетом скидок кроме ВБ Кошелька|
+|`basicSale`|`Int32`||
+|`clientSale`|`Int32`||
+|`feedbacksCount`|`Int32`|Количество оценок|
+|`allSalesAmount`|`Int32`|(deprecated) Купили более раз, устарело|
+|`stocksCount`|`Int32`|Кол-во остатков по всем размерам и на всех складах|
+|`brandName`|`String`|Название бренда|
+|`brandUrl`|`String`|Ссылка на бренд|
+|`sellerName`|`String`|Название селлера|
+|`sellerInn`|`String`|ИНН|
+|`sellerOgrn`|`String`|ОГРН|
+|`name`|`String`|Название товара|
+|`description`|`String`|Описание товара|
+|`contents`|`String`||
+|`composition`|`String`||
+|`options_name`|`Array(String)`||
+|`options_value`|`Array(String)`||
+|`volume`|`String`|Объем товара, вычисляется из характеристик|
+|`country`|`String`|Страна производства|
+|`weight`|`String`|Вес|
+|`numberOfItems`|`String`|количество предметов, вычисляется из характеристик|
+|`promoText`|`String`|Название акции, в котором участвует|
+|`last30DayFeedbacks`|`Int32`|Количество отзывов на данный артикул(не на rootId) за 30 дней|
+|`options.name`|`Array(String)`|Массив названий характеристик|
+|`options.value`|`Array(String)`|Массив значений характеристик, соотвественно|
 
 ## `productTexts`
 
 История изменений контента товара
 
-| `id` | `int` | артикул товара |
-| --- | --- | --- |
-| `lastModifiedAt` | `datetime` | последнее обновление товара по версии ВБ |
-| `date` | `datetime` | последний парсинг после обновления |
-| `name` | `String` | название товара |
-| `description` | `String` | описание |
-| `contents` | `String` | — |
-| `composition` | `String` | — |
-| `photosCount` | `int` | кол-во фото |
-| `hasVideo` | `int` | наличие видео |
-| `options.name` | `array(String)` | массив ключей характеристик |
-| `options.value` | `array(String)` | массив значений характеристик |
-| `vendorCode` | `String` | артикул селлера |
-| `volume` | `String` | значение “Объем товара” из характеристик, в отдельном поле |
-| `weight` | `String` | значение “Вес товара с упаковкой (г)” или “Вес с упаковкой (кг)” из характеристик |
-| `numberOfItems` | `String` | значение “Количество предметов в упаковке” из характеристик |
-| `country` | `String` | значение “Страна производства” из характеристик |
+|имя столбца|Тип|Описание|
+|--|--|--|
+|`id`|`Int32`|Артикул|
+|`lastModifiedAt`|`DateTime`|Последнеее обновление на ВБ|
+|`date`|`DateTime`|дата парсинга|
+|`name`|`String`|Название товара|
+|`description`|`String`|Описание товара|
+|`contents`|`String`|Состав?|
+|`composition`|`String`|Состав?|
+|`photosCount`|`Int32`|Количество фотографий|
+|`hasVideo`|`Int32`|Имеется ли видео|
+|`options.name`|`Array(String)`|Массив строк - названия характеристик|
+|`options.value`|`Array(String)`|Массив строк - значения характеристик|
+|`vendorCode`|`String`|Артикул поставщика|
+|`volume`|`String`|значение “Объем товара” из характеристик, в отдельном поле|
+|`weight`|`String`|значение “Вес товара с упаковкой (г)” или “Вес с упаковкой (кг)” из характеристик |
+|`numberOfItems`|`String`|значение “Количество предметов в упаковке” из характеристик |
+|`country`|`String`|значение “Страна производства” из характеристик|
+|`etag`|`String`||
+|`colors`|`Array(Int32)`|Массив чисел - Артикулы товаров, связанные по данной группе цветов|
 
-## `~~productStocks~~` **DEPRECATED**
-
-История изменений остатков. Таблица для хранения истории остатков и спп товара. Может быть несколько строк в день
-
-| `id` | `int` | артикул товара |
-| --- | --- | --- |
-| `parsedAt` | `datetime` | дата парсинга |
-| `basePrice` | `int` | базовая цена в копейках до скидок |
-| `price` | `int` | конечная цена в копейках с учетом скидок продавца и ВБ(СПП) |
-| `basicSale` | `int` | скидка продавца |
-| `clientSale` | `int` | скидка ВБ(СПП) |
-| `stocks.wh` | `array(int)` | массив остатков: номер склада |
-| `stocks.qty` | `array(int)` | массив остатков: кол-во товаров |
-| `stocks.optionId` | `array(int)` | массив остатков: номер размера |
-| `stocks.name` | `array(String)` | массив остатков: название размера |
-| `stocks.origName` | `array(String)` | массив остатков: название размера |
 
 ## `searchInfoHistory`
 
 история изменений частотностей запросов. пока что работает с ошибками
-
-| `searchKeyId` | `int` | айди запроса. сам запрос хранится в `searchesDict` |
-| --- | --- | --- |
-| `date` | `date` | дата парсинга, без времени |
-| `requestCount` | `int` | частотность запроса в месяц |
-| `goodsCount` | `int` | кол-во товаров в выдаче на ВБ по этому запросу |
-| `subjects.id` | `int` | массив с предметами: номер предмета |
-| `subjects.count` | `int` | массив с предметами: кол-во товаров этого предмета в этом запросе |
-| `normQuery` | `String` | кластер запроса |
-| `preset` | `String` | какой-то `preset` |
+|имя столбца|Тип|Описание|
+|--|--|--|
+|`searchKeyId`|`Int32`|айди поискового запроса|
+|`date`|`Date`|дата парсинга|
+|`requestCount`|`Int32`|частотность запроса за 30 дней|
+|`goodsCount`|`Int32`|Количество товаров в выдаче|
+|`subjects.id`|`Array(Int32)`|Массив айди предметов|
+|`subjects.count`|`Array(Int32)`|Массив количества предметов в выдаче по данному запросу|
+|`normQuery`|`String`||
+|`preset`|`String`||
+|`version`|`Int64`||
 
 ## `feedbacksInfoHistory`
 
 Сводные данные по отзывам, обновляются только если у товара изменился счетчик отзывов
 
-| `rootId` | `int` | `rootId` товара. по этому столбцу отсортированы данные |
-| --- | --- | --- |
-| `feedbacksCount` | `date` | общее число отзывов |
-| `feedbacksCountWithPhoto` | `int` | кол-во отзывов с фото |
-| `feedbacksCountWithText` | `int` | кол-во отзывов с текстом |
-| `valuation` | `int` | рейтинг |
-| `valuation1Count` | `int` | кол-во отзывов с 1 звезд |
-| `valuation2Count` | `int` | кол-во отзывов с 2 звезд |
-| `valuation3Count` | `int` | кол-во отзывов с 3 звезд |
-| `valuation4Count` | `int` | кол-во отзывов с 4 звезд |
-| `valuation5Count` | `int` | кол-во отзывов с 5 звезд |
-| `parsedAt` | `DateTime` | дата парсинга |
-| `productListFeedbacksCount` | `int` | тех. столбец |
+|имя столбца|Тип|Описание|
+|--|--|--|
+|`rootId`|`Int32`|Идентификатор, по которому товары связаны по цветам|
+|`feedbacksCount`|`Int32`|количество оценок|
+|`feedbacksCountWithPhoto`|`Int32`|Количество отзывов с фотографиями|
+|`feedbacksCountWithText`|`Int32`|Количество отзывов с текстом|
+|`valuation`|`Float32`|сумма оценок|
+|`valuation1Count`|`Int32`|количество оценок с 1 звездой|
+|`valuation2Count`|`Int32`|количество оценок с 2 звездами|
+|`valuation3Count`|`Int32`|количество оценок с 3 звездами|
+|`valuation4Count`|`Int32`|количество оценок с 4 звездами|
+|`valuation5Count`|`Int32`|количество оценок с 5 звездами|
+|`parsedAt`|`DateTime`|дата парсинга|
+|`productListFeedbacksCount`|`Int32`||
+|`feedbacksPhotoUrisCount`|`Int32`|количество фотографий у последних 1000 отзывов|
